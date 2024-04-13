@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import time
 
 
 # set full dataframe for display
@@ -42,10 +43,60 @@ def cleanDataFrame():
 
     return fully_cleaned_df
 
-def main():
-    complete_df = cleanDataFrame()
+# Load data function 
+def load_data():
 
-    # Print cleaned data frame
-    print(complete_df)
+    file = input("Enter the name of your file (with extension): ")
+    print("Loading input data set:")
+    print("***********************")
+    start_time = time.time()
+    current_time = time.strftime("%H:%M:%S")
+    print(f"[{(current_time)}] Starting Script")
+    
+    try: 
+        dframe = pd.read_csv(file)
+        print(f"[{current_time}] Loading {file}")
+        print(f"[{current_time}] Total Columns Read: {len(dframe.columns)}")
+        print(f"[{current_time}] Total Rows Read: {len(dframe)}")
+        end_time = time.time()
+        total_time = end_time - start_time
+        print(f"\nTime to load is: {total_time: .2f} seconds")
+        return dframe
+    except FileNotFoundError:
+        print(f"Error: File '{file}' not found.")
+        return None
+
+def main():
+    while True:
+        print("\nMenu:")
+        print("(1) Load Data")
+        print("(2) Process Data")
+        print("(3) Print Answers")
+        print("(4) Search Accidents (City, State, and Zip Code)")
+        print("(5) Search Accidents (Year, Month, and Day)")
+        print("(6) Search Accidents (Temperatute Range and Visibility Range)")
+        print("(7) Quit")
+
+        choice = input("Please enter your choice: ")
+
+        if choice == '1':
+            load_data()
+        elif choice == '2':
+            pass
+        elif choice == '3':
+            pass
+        elif choice == '4':
+            pass
+        elif choice == '5':
+            pass
+        elif choice == '6':
+            pass
+        elif choice == '7':
+            print("Goodbye")
+            break
+        else:
+            print("Invalid choice. Please enter a valid option.")
+            #Implement feauture to print Total Runnign Time
+            # "Total Running Time (In Minutes): <Answer>"
 
 main()
