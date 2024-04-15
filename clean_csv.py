@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 # set full dataframe for display
 '''
@@ -41,10 +40,26 @@ def cleanDataFrame():
 
     return fully_cleaned_df
 
+# Checks for similiar severity in 3 States
+def commonSeverity():
+    clean_df = cleanDataFrame()
+    # Filter the data frame to include only accidents from Virginia, California, and Florida
+    check_states = clean_df[clean_df['State'].isin(['VA', 'CA', 'FL'])]
+    # Group the filtered data frame by severity and count the occurrences of each severity level
+    severity_level = check_states['Severity'].value_counts()
+    # Find the severity level with the highest count
+    most_common_severity = severity_level.idxmax()
+
+    print("The most common severity in VA, CA, and FL is: ", most_common_severity)
+    
 def main():
     complete_df = cleanDataFrame()
 
     # Print cleaned data frame
     print(complete_df)
+    print()
+    
+    # Print most common severity of 3 states
+    commonSeverity()
 
 main()
