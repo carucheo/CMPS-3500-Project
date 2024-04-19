@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import datetime as dtime
 
 # set full dataframe for display
 '''
@@ -42,10 +42,73 @@ def cleanDataFrame():
 
     return fully_cleaned_df
 
+def question_7(clean_df):
+    nyc_data = clean_df[clean_df['City'].isin(['New York'])]
+    nyc_data_by_weather = nyc_data['Weather_Condition'].value_counts()
+    nyc_data = nyc_data.sort_values(by='Start_Time')
+    nyc_data['Month'] = nyc_data['Start_Time'].apply(lambda x: "%d" % (x.month)).astype(int)
+
+    now = dtime.datetime.now()
+    now = now.strftime("%I:%M:%S %p")
+    # now = now.strftime("%H:%M:%S")
+
+    print("")
+    print(f"[{now}] 7. What are the 3 most common weather conditions (weather_conditions) when accidents occurred in New York city? Display the data per month.")
+    print(f"[{now}] The 3 most common weather conditions when accidents occurred in New York city: ")
+    print(f"[{now}]\n")
+    print(nyc_data_by_weather.head(3))
+    print("")
+    print(f"[{now}] Here is each weather condition experienced in New York City per month:")
+    print(f"[{now}]\n")
+    print(nyc_data.groupby(['Month', 'Weather_Condition']).size())
+    print("")
+
+def question_8(clean_df):
+    nh_data = clean_df[clean_df['State'].isin(['NH'])]
+    nh_data_by_sev_two = nh_data.loc[nh_data['Severity'] == 2]
+    nh_data_final = nh_data_by_sev_two['Visibility(mi)'].max()
+
+    now = dtime.datetime.now()
+    now = now.strftime("%I:%M:%S %p")
+
+    print("")
+    print(f"[{now}] 8. What was the maximum visibility of all accidents of severity 2 that occurred in the state of New Hampshire?")
+    print(f"[{now}] The maximum visibility of all accidents of severity 2 that occurred in the state of New Hampshire: {nh_data_final} miles")
+    print("")
+
+def question_9(clean_df):
+    bak_data = clean_df[clean_df['City'].isin(['Bakersfield'])]
+    # bak_data_by_severity = bak_data['Severity'].value_counts()[bak_data['Severity'].unique()]
+    bak_data_by_severity = bak_data['Severity'].value_counts().sort_index()
+    # bak_data_by_severity = bak_data.groupby('Severity')['Severity'].value_counts().sort_values(ascending=False)
+    bak_data = bak_data.sort_values(by='Start_Time')
+    bak_data['Year'] = bak_data['Start_Time'].apply(lambda x: "%d" % (x.year))
+
+    now = dtime.datetime.now()
+    now = now.strftime("%I:%M:%S %p")
+
+    print("")
+    print(f"[{now}] 9. How many accidents of each severity were recorded in Bakersfield? Display the data per year.")
+    print(f"[{now}] Accidents based on what severity was recorded in Bakersfield:")
+    print(f"[{now}]")
+    print("")
+    print(bak_data_by_severity)
+    print("")
+    print(f"[{now}] Here is the number of accidents per severity level recorded in Bakersfield per year:")
+    print(f"[{now}]\n")
+    print(bak_data.groupby(['Year', 'Severity']).size())
+    print("")
+
+
 def main():
     complete_df = cleanDataFrame()
 
     # Print cleaned data frame
-    print(complete_df)
+    # print(complete_df)
+
+    question_7(complete_df)
+    question_8(complete_df)
+    question_9(complete_df)
+
 
 main()
