@@ -10,6 +10,7 @@
 import pandas as pd
 import numpy as np
 import datetime as dtime
+import time
 
 # set full dataframe for display
 '''
@@ -164,11 +165,11 @@ def output3(data_frame):
 
     
 # Checks for similiar severity in 3 States
-def commonSeverity():
+def commonSeverity(data_frame):
     # Store the data frame into a variable
-    clean_df_one = cleanDataFrame()
+    #clean_df_one = cleanDataFrame()
     # Filter the data frame to include only accidents from VA, CA, and FL
-    check_states = clean_df_one[clean_df_one['State'].isin(['VA', 'CA', 'FL'])]
+    check_states = data_frame[data_frame['State'].isin(['VA', 'CA', 'FL'])]        #Switched from clean_df_one
     # Group the filtered data frame by severity and count the occurrences of each severity level
     severity_level = check_states['Severity'].value_counts()
     # Find the severity level with the highest count
@@ -178,11 +179,11 @@ def commonSeverity():
     print()
 
 # Check for the top 5 cities with the most accidents in CA    
-def californiaCityAccidents():
+def californiaCityAccidents(data_frame):
     # Store the data frame into a variable
-    clean_df_two = cleanDataFrame()
+    #clean_df_two = cleanDataFrame()
     #Filer the data frame to include only accidents in CA
-    ca_accidents = clean_df_two[clean_df_two['State'].isin(['CA'])]
+    ca_accidents = data_frame[data_frame['State'].isin(['CA'])]     # Switched from clean_df_two
     # Extract the year from 'Start_Time' dt object
     ca_accidents_fix = ca_accidents.copy()
     ca_accidents_fix['Year'] = ca_accidents_fix['Start_Time'].dt.year
@@ -276,6 +277,12 @@ def main():
             output1(fully_cleaned_df)
             output2(fully_cleaned_df)
             output3(fully_cleaned_df)
+            commonSeverity(fully_cleaned_df)
+            californiaCityAccidents(fully_cleaned_df)
+            question_7(fully_cleaned_df)
+            question_8(fully_cleaned_df)
+            question_9(fully_cleaned_df)
+
         elif choice == '4':
             pass
         elif choice == '5':
