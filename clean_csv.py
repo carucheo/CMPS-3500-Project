@@ -357,13 +357,11 @@ def main():
                 print("Data has already been processed.")
         elif choice == '3':
             if isDFLoaded and isDFProccessed:
-                '''
                 output1(fully_cleaned_df)
                 output2(fully_cleaned_df)
                 output3(fully_cleaned_df)
                 commonSeverity(fully_cleaned_df)
                 californiaCityAccidents(fully_cleaned_df)
-                '''
                 question_7(fully_cleaned_df)
                 question_8(fully_cleaned_df)
                 question_9(fully_cleaned_df)
