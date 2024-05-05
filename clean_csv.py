@@ -255,10 +255,10 @@ def avgHumidityAndTemperature(data_frame):
     print()
 
 # QUESTION 7
-def question_7(clean_df):
+def nycWeatherConditionAccidents(data_frame):
     # Store and filter the inputted data frame
     # to only have accident reports from New York City
-    raw_nyc_data = clean_df[clean_df['City'].isin(['New York'])]
+    raw_nyc_data = data_frame[data_frame['City'].isin(['New York'])]
 
     # create a version of raw data that can be changed however => will clean up later
     dirty_nyc_data = raw_nyc_data.copy()
@@ -274,6 +274,7 @@ def question_7(clean_df):
     # Count the number of accidents per weather_condition and set up column "Accidents"
     top_weather_conditons = \
             clean_nyc_data.groupby(['Weather_Condition']).size().reset_index(name = 'Accidents')
+    
     # Sort this dataframe by the number of accidents per weather condition and filter out the top 3
     top_weather_conditons = \
             top_weather_conditons.sort_values(by = 'Accidents', ascending = False).head(3)
@@ -282,6 +283,7 @@ def question_7(clean_df):
     # Count the number of accidents per weather condition
     clean_nyc_data = \
             clean_nyc_data.groupby(['Month', 'Weather_Condition']).size().reset_index(name = 'Accidents')
+    
     # Sort this dataframe by the 'Month' column => 'Accidents' is sorted from greatest to least
     clean_nyc_data = \
             clean_nyc_data.sort_values(by = ['Month', 'Accidents'], ascending = [True, False])
@@ -292,23 +294,24 @@ def question_7(clean_df):
     print("------------------------------------------------------------------")
     print(f"[{now}] 7. What are the 3 most common weather conditions (weather_conditions) when accidents occurred in New York city? Display the data per month.")
     print(f"[{now}] The 3 most common weather conditions when accidents occurred in New York city per month:\n")
-
     for month in clean_nyc_data['Month'].unique():
         weather_per_month = clean_nyc_data[clean_nyc_data['Month'] == month].head(3)
         print(weather_per_month.to_string(index = False)) 
         print()
-
     print(f"[{now}] Top Three Weather Condition seen across all months:\n")
     print(top_weather_conditons.to_string(index = False))
     print("------------------------------------------------------------------")
     print()
 
-def question_8(clean_df):
+# QUESTION 8
+def nhMaxVisibility(data_frame):
     # Store and filter the inputted data frame
     # to only have accident reports from New Hampshire
-    nh_data = clean_df[clean_df['State'].isin(['NH'])]
+    nh_data = data_frame[data_frame['State'].isin(['NH'])]
+    
     # Filter the data to only have instances where Severity was 2
     nh_data_by_sev_two = nh_data.loc[nh_data['Severity'] == 2]
+    
     # Get the max Visibility from the previosuly-filtered out data
     nh_data_final = nh_data_by_sev_two['Visibility(mi)'].max()
 
@@ -316,20 +319,21 @@ def question_8(clean_df):
     now = now.strftime("%H:%M:%S")
 
     print("------------------------------------------------------------------")
-    
     print(f"[{now}] 8. What was the maximum visibility of all accidents of severity 2 that occurred in the state of New Hampshire?")
-    print(f"[{now}] The maximum visibility of all accidents of severity 2 that occurred in the state of New Hampshire: {nh_data_final} miles")
-    
+    print(f"[{now}] The maximum visibility of all accidents of severity 2 that occurred in the state of New Hampshire is:")
+    print(f"[{now}] {nh_data_final} miles")
     print("------------------------------------------------------------------")
     print()
 
-def question_9(clean_df):
+# QUESTION 9
+def bakersfieldSeverityAccidents(data_frame):
     # Store and filter the inputted data frame
     # to only have accident reports from Bakersfield
-    raw_bak_data = clean_df[clean_df['City'].isin(['Bakersfield'])]
+    raw_bak_data = data_frame[data_frame['City'].isin(['Bakersfield'])]
 
     # create a version of raw data that can be changed however => will clean up later
     dirty_bak_data = raw_bak_data.copy()
+    
     # add a Year column to the dataframe
     dirty_bak_data['Year'] = \
             dirty_bak_data['Start_Time'].apply(lambda x: "%d" % (x.year)).astype(int)
@@ -343,6 +347,7 @@ def question_9(clean_df):
     # Count the number of accidents per severity and set up column "Accidents"
     total_per_severity = \
             clean_bak_data.groupby(['Severity']).size().reset_index(name = 'Accidents')
+    
     # Sort this dataframe by the number of accidents per severity level
     total_per_severity = \
             total_per_severity.sort_values(by = 'Severity', ascending = True)
@@ -351,6 +356,7 @@ def question_9(clean_df):
     # Count the number of accidents per severity
     clean_bak_data = \
             clean_bak_data.groupby(['Year', 'Severity']).size().reset_index(name = 'Accidents')
+    
     # Sort this dataframe by the 'Year' column => 'Severity' is sorted from least to greatest
     clean_bak_data = \
             clean_bak_data.sort_values(by = ['Year', 'Severity'], ascending = [True, True])
@@ -364,17 +370,13 @@ def question_9(clean_df):
     print("------------------------------------------------------------------")
     print(f"[{now}] 9. How many accidents of each severity were recorded in Bakersfield? Display the data per year.")
     print(f"[{now}] The number of accidents of each severity recorded in Bakersfield per year:\n")
-
     for year in clean_bak_data['Year'].unique():
         severity_per_year = clean_bak_data[clean_bak_data['Year'] == year]
         print(severity_per_year.to_string(index = False)) 
         print()
-
-    print("")
     print(f"[{now}] Total Number of Accidents in Bakersfield per each severity across all recorded years:\n")
     print(total_per_severity.to_string(index = False))
     print("------------------------------------------------------------------")
-    print()
 
 def main():
     data_frame = None
@@ -418,9 +420,9 @@ def main():
                 commonSeverityLevel(fully_cleaned_df)             # Question 4
                 californiaCityAccidents(fully_cleaned_df)         # Question 5
                 avgHumidityAndTemperature(fully_cleaned_df)       # Question 6
-                question_7(fully_cleaned_df)
-                question_8(fully_cleaned_df)
-                question_9(fully_cleaned_df)
+                nycWeatherConditionAccidents(fully_cleaned_df)    # Question 7
+                nhMaxVisibility(fully_cleaned_df)                 # Question 8
+                bakersfieldSeverityAccidents(fully_cleaned_df)    # Question 9
             elif isDFLoaded and not isDFProccessed:
                 print("\nData has been loaded, but not processed.")
             elif not isDFLoaded:
