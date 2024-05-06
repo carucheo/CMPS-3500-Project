@@ -559,6 +559,50 @@ def searchYearMonthDay(df):
     else:
         print('\n')
         print(match)
+        
+# SEARCH CAPACITY QUESTION 3
+def question_13(clean_df):
+    print("Seach Accidents:")
+    print("******************")
+
+    # Set Up Variables to track time
+    start_time = time.time()
+    current_time = time.strftime("%H:%M:%S")
+
+    # Get input 
+    min_temp_input = input("Enter a Minimum Temperature (F): ")
+    max_temp_input = input("Enter a Maximum Temperature (F): ")
+    min_range_input = input("Enter a Minimum Visibility (mi): ")
+    max_range_input = input("Enter a Maximum Visibility (mi): ")
+    print("")
+
+    # Convert to float or set to None if empty
+    min_temp = float(min_temp_input) if min_temp_input else None
+    max_temp = float(max_temp_input) if max_temp_input else None
+    min_range = float(min_range_input) if min_range_input else None
+    max_range = float(max_range_input) if max_range_input else None
+
+    filtered_df = clean_df
+
+    if min_temp is not None:
+        filtered_df = filtered_df[filtered_df['Temperature(F)'] >= min_temp]
+    if max_temp is not None:
+        filtered_df = filtered_df[filtered_df['Temperature(F)'] <= max_temp]
+    if min_range is not None:
+        filtered_df = filtered_df[filtered_df['Visibility(mi)'] >= min_range]
+    if max_range is not None:
+        filtered_df = filtered_df[filtered_df['Visibility(mi)'] <= max_range]
+
+    #Count total accidents
+    total_accidents = len(filtered_df)
+
+    #Check total time
+    end_time = time.time()
+    total_time = end_time - start_time
+
+    print(f"There were {total_accidents} accidents using the specified range")
+    print("")
+    print(f"Time to perform search is: {total_time} ")
 
 def main():
     data_frame = None
@@ -615,7 +659,7 @@ def main():
         elif choice == '5':
             searchYearMonthDay(fully_cleaned_df)
         elif choice == '6':
-            pass
+            question_13(fully_cleaned_df)
         elif choice == '7':
             print("Goodbye")
             break
