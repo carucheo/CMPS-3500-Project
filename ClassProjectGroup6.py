@@ -378,27 +378,29 @@ def bakersfieldSeverityAccidents(data_frame):
     print(total_per_severity.to_string(index = False))
     print("------------------------------------------------------------------")
 
-def question10(df):
+# QUESTION 10
+def vegasLongestAccidents(data_frame):
     print("\n10. What was the longest accident (in hours) recorded in Las Vegas in" +
           " the Spring (March, April, and May)?")
     print("Displaying the longest accidents of each month in Spring per year:")
-    df['Start_Time'] = pd.to_datetime(df['Start_Time'],
+    data_frame['Start_Time'] = pd.to_datetime(data_frame['Start_Time'],
                                       format='%-m/%-d/%Y %-H:%-M %p')
-    df['End_Time'] = pd.to_datetime(df['End_Time'],
+    data_frame['End_Time'] = pd.to_datetime(data_frame['End_Time'],
                                       format='%-m/%-d/%Y %-H:%-M %p')
 
-    min_year = df['Start_Time'].dt.year.min()
-    max_year = df['Start_Time'].dt.year.max()
+    min_year = data_frame['Start_Time'].dt.year.min()
+    max_year = data_frame['Start_Time'].dt.year.max()
 
+    print("------------------------------------------------------------------")
     for year in range(min_year, (max_year + 1)):
         print("\n\nThe longest accident recorded in Las Vegas in Spring of",
               year, "was :")
-        march = df[(df['Start_Time'].dt.month == 3) &
-                   (df['Start_Time'].dt.year == year)].copy()
-        april = df[(df['Start_Time'].dt.month == 4) &
-                   (df['Start_Time'].dt.year == year)].copy()
-        may = df[(df['Start_Time'].dt.month == 5) &
-                   (df['Start_Time'].dt.year == year)].copy()
+        march = data_frame[(data_frame['Start_Time'].dt.month == 3) &
+                   (data_frame['Start_Time'].dt.year == year)].copy()
+        april = data_frame[(data_frame['Start_Time'].dt.month == 4) &
+                   (data_frame['Start_Time'].dt.year == year)].copy()
+        may = data_frame[(data_frame['Start_Time'].dt.month == 5) &
+                   (data_frame['Start_Time'].dt.year == year)].copy()
         if not march.empty:
             march['Time_in_Hours'] = (march['End_Time'] -
                                       march['Start_Time']).dt.total_seconds() / 3600
@@ -431,6 +433,7 @@ def question10(df):
 
     print("------------------------------------------------------------------")
 
+# SEARCH FUNCTION 1
 def searchStateCityZip(df):
     # Get input from user for the state, city, and zipcode
     print("\nEnter state's abbreviation. For example, CA for California.")
@@ -483,6 +486,7 @@ def checkDay(day):
         print("Value entered for day is not valid.")
         return False
 
+# SEARCH FUNCTION 2
 def searchYearMonthDay(df):
     # Get input from user for the year, month, and day
     print("\n")
@@ -560,8 +564,8 @@ def searchYearMonthDay(df):
         print('\n')
         print(match)
         
-# SEARCH CAPACITY QUESTION 3
-def question_13(clean_df):
+# SEARCH FUNCTION 3
+def accidentsUsingTempAndVisibility(df):
     print("Seach Accidents:")
     print("******************")
 
@@ -582,7 +586,7 @@ def question_13(clean_df):
     min_range = float(min_range_input) if min_range_input else None
     max_range = float(max_range_input) if max_range_input else None
 
-    filtered_df = clean_df
+    filtered_df = df
 
     if min_temp is not None:
         filtered_df = filtered_df[filtered_df['Temperature(F)'] >= min_temp]
@@ -649,7 +653,7 @@ def main():
                 nycWeatherConditionAccidents(fully_cleaned_df)    # Question 7
                 nhMaxVisibility(fully_cleaned_df)                 # Question 8
                 bakersfieldSeverityAccidents(fully_cleaned_df)    # Question 9
-                question10(fully_cleaned_df)                      # Question 10
+                vegasLongestAccidents(fully_cleaned_df)           # Question 10
             elif isDFLoaded and not isDFProccessed:
                 print("\nData has been loaded, but not processed.")
             elif not isDFLoaded:
@@ -659,7 +663,7 @@ def main():
         elif choice == '5':
             searchYearMonthDay(fully_cleaned_df)
         elif choice == '6':
-            question_13(fully_cleaned_df)
+            accidentsUsingTempAndVisibility(fully_cleaned_df)
         elif choice == '7':
             print("Goodbye")
             break
