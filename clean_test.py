@@ -68,9 +68,7 @@ def question10(df):
                                       march['Start_Time']).dt.total_seconds() / 3600
             max_time_march = march.loc[march['Time_in_Hours'].idxmax()]
             max_time_id1 = max_time_march['ID']
-            row_max_march = df[df['ID'] == max_time_id1]
             print("\nMarch: ", max_time_march['Time_in_Hours'], "hours")
-            print(row_max_march)
         else:
             print("\nMarch: No accidents in", year)
         if not april.empty:
@@ -78,9 +76,7 @@ def question10(df):
                                       april['Start_Time']).dt.total_seconds() / 3600
             max_time_april = april.loc[april['Time_in_Hours'].idxmax()]
             max_time_id2 = max_time_april['ID']
-            row_max_april = df[df['ID'] == max_time_id2]
             print("\nApril: ", max_time_april['Time_in_Hours'], "hours")
-            print(row_max_april)
         else:
             print("\nApril: No accidents in", year)
         if not may.empty:
@@ -88,9 +84,7 @@ def question10(df):
                                     may['Start_Time']).dt.total_seconds() / 3600
             max_time_may = may.loc[may['Time_in_Hours'].idxmax()]
             max_time_id3 = max_time_may['ID']
-            row_max_may = df[df['ID'] == max_time_id3]
             print("\nMay: ", max_time_may['Time_in_Hours'], "hours")
-            print(row_max_may)
         else:
             print("\nMay: No accidents in", year)
 
@@ -237,7 +231,7 @@ def main():
 
     question10(complete_df)
 
-    #searchStateCityZip(complete_df)
+    searchStateCityZip(complete_df)
 
     searchYearMonthDay(complete_df)
 
