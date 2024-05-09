@@ -25,9 +25,12 @@ flags = Flag()
 class Text():
     def __init__(self):
         self.reset = "\033[0m"
+        self.italic = "\033[3m"
+        self.blink = "\033[5m"
         self.red = "\033[31m"
         self.green= "\033[32m"
         self.yellow = "\033[33m"
+        self.blue = "\033[34m"
 
 text = Text()
 
@@ -60,7 +63,7 @@ def loadData():
         end_time = time.time()
         total_time = end_time - start_time
 
-        print(f"\nTime to load is: {total_time: .2f} seconds")
+        print(text.blue + f"\nTime to load is: {total_time: .2f} seconds" + text.reset)
         flags.isDFLoaded = True
         return data_frame
 
@@ -106,7 +109,7 @@ def cleanDataFrame(data_frame):
     end_time = time.time()
     total_time = end_time - start_time
 
-    print(f"\nTime to clean is: {total_time: .2f} seconds")
+    print(text.blue + f"\nTime to clean is: {total_time: .2f} seconds" + text.reset)
     flags.isDFProccessed = True
     return fully_cleaned_df
 
@@ -460,8 +463,14 @@ def vegasLongestAccidents(data_frame):
 
 # SEARCH FUNCTION 1
 def searchStateCityZip(df):
+    # Start the timer 
+    start_time = time.time()
+
     # Get input from user for the state, city, and zipcode
-    print("\nEnter state's abbreviation. For example, CA for California.")
+    print("")
+    print("Search Accidents:")
+    print("******************")
+    print("Enter state's abbreviation. For example, CA for California.")
     state = input("Press 'Enter' if no state: ")
     city = input("Enter city. Press 'Enter' if no city: ")
     zipcode = input("Enter zipcode. Press 'Enter' if no zipcode: ")
@@ -491,11 +500,20 @@ def searchStateCityZip(df):
 
     # print dataframe after search is done.
     if search.empty:
-        print('\n')
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("")
         print("No results found")
+        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
     else:
-        print('\n')
-        print(search)
+        #Check total time
+        end_time = time.time()
+        total_time = end_time - start_time
+        total_accidents = len(search)
+        print("")
+        print(f"There were {total_accidents} accidents\n")
+        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+
 
 def checkMonth(month):
     if (int(month) >= 1) and (int(month) <= 12):
@@ -513,8 +531,13 @@ def checkDay(day):
 
 # SEARCH FUNCTION 2
 def searchYearMonthDay(df):
+    # Start the timer 
+    start_time = time.time()
+
     # Get input from user for the year, month, and day
-    print("\n")
+    print("")
+    print("Search Accidents:")
+    print("******************")
     year = input("Enter 4-digit year. Press 'Enter' if no year: ")
     print("Enter month. For example, '3' for March.")
     month = input("Press 'Enter' if no month: ")
@@ -583,15 +606,23 @@ def searchYearMonthDay(df):
 
     # print dataframe after search is done.
     if match.empty:
-        print('\n')
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("")
         print("No results found")
+        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
     else:
-        print('\n')
-        print(match)
+        end_time = time.time()
+        total_time = end_time - start_time
+        total_accidents = len(match)
+        print("")
+        print(f"There were {total_accidents} accidents\n")
+        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
         
 # SEARCH FUNCTION 3
 def accidentsUsingTempAndVisibility(df):
-    print("Seach Accidents:")
+    print("")
+    print("Search Accidents:")
     print("******************")
 
     # Set Up Variables to track time
@@ -631,7 +662,7 @@ def accidentsUsingTempAndVisibility(df):
 
     print(f"There were {total_accidents} accidents using the specified range")
     print("")
-    print(f"Time to perform search is: {total_time} ")
+    print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
 
 def main():
     data_frame = None
@@ -676,22 +707,38 @@ def main():
                 vegasLongestAccidents(fully_cleaned_df)           # Question 10
             elif flags.isDFLoaded and not flags.isDFProccessed:
                 print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
-            elif not flags.isDFLoaded:
-                print(text.yellow + "\nWARNING: Data needs to be loaded." + text.reset)
+            elif not flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data needs to be loaded and processed." + text.reset)
         elif choice == '4':
-            searchStateCityZip(fully_cleaned_df)
+            if not flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data needs to be loaded and processed." + text.reset)
+            elif flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
+            else:
+                searchStateCityZip(fully_cleaned_df)
         elif choice == '5':
-            searchYearMonthDay(fully_cleaned_df)
+            if not flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data needs to be loaded and processed." + text.reset)
+            elif flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
+            else:
+                searchYearMonthDay(fully_cleaned_df)
         elif choice == '6':
-            accidentsUsingTempAndVisibility(fully_cleaned_df)
+            if not flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data needs to be loaded and processed." + text.reset)
+            elif flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
+            else:
+                accidentsUsingTempAndVisibility(fully_cleaned_df)
         elif choice == '7':
-            print("Goodbye")
+            print(text.green + text.blink + text.italic + "\nGoodbye" + text.reset)
             break
         else:
-            print("Invalid choice. Please enter a valid option.")
+            print(text.red + "\nERROR: Invalid choice. Please enter a valid option." + text.reset)
             #Implement feauture to print Total Run Time
     end_time = time.time()
-    total_time = (end_time - start_time) / 60
-    print(f"Total Running Time (In Minutes): {total_time: .2f}")
+    total_time = end_time - start_time
+    total_time = dtime.timedelta(seconds=round(total_time, 6))
+    print(text.blue + f"\nTotal Running Time: {total_time}" + text.reset)
 
 main()
