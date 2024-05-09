@@ -13,6 +13,24 @@ import numpy as np
 import datetime as dtime
 import time
 
+# Class for flags used in main menu
+class Flag:
+    def __init__(self):
+        self.isDFLoaded = False
+        self.isDFProccessed = False
+
+flags = Flag()
+
+# Class that helps with customizing printed text
+class Text():
+    def __init__(self):
+        self.reset = "\033[0m"
+        self.red = "\033[31m"
+        self.green= "\033[32m"
+        self.yellow = "\033[33m"
+
+text = Text()
+
 # Function to load data from a file
 def loadData():
     # Ask user to input file name
@@ -28,13 +46,14 @@ def loadData():
 
     try: 
         # Read and create a data frame from user file
+        print(f"[{current_time}] Loading {user_file}")
         raw_data = pd.read_csv(user_file)
         data_frame = pd.DataFrame(raw_data, columns = ['ID', 'Severity', 'Start_Time', 'End_Time', 'Distance(mi)', 
                                                        'Description', 'City', 'County', 'State', 'Zipcode', 'Country', 
                                                        'Timezone', 'Weather_Timestamp', 'Temperature(F)', 'Humidity(%)', 
                                                        'Pressure(in)', 'Visibility(mi)', 'Precipitation(in)', 'Weather_Condition'])
 
-        print(f"[{current_time}] Loading {user_file}")
+        current_time = time.strftime("%H:%M:%S")
         print(f"[{current_time}] Total Columns Read: {len(data_frame.columns)}")
         print(f"[{current_time}] Total Rows Read: {len(data_frame)}")
 
@@ -42,10 +61,12 @@ def loadData():
         total_time = end_time - start_time
 
         print(f"\nTime to load is: {total_time: .2f} seconds")
+        flags.isDFLoaded = True
         return data_frame
 
     except FileNotFoundError:
-        print(f"Error: File '{user_file}' not found.")
+        print(text.red + f"\nERROR: File '{user_file}' not found." + text.reset)
+        flags.isDFLoaded = False
         return None
 
 # Function to process/clean data from a file
@@ -58,6 +79,7 @@ def cleanDataFrame(data_frame):
     current_time = time.strftime("%H:%M:%S")
 
     print(f"[{current_time}] Starting Script")
+    print(f"[{current_time}] Performing Data Clean Up")
 
     # Eliminate all rows with data missing in the following columns: 
     columns_to_check = ['ID', 'Severity', 'Start_Time', 'End_Time', 'Zipcode', 'Country', 'Visibility(mi)', 'Weather_Condition']
@@ -78,14 +100,14 @@ def cleanDataFrame(data_frame):
     cleaned_thrice['End_Time'] = pd.to_datetime(cleaned_thrice['End_Time'])
     fully_cleaned_df = cleaned_thrice[(cleaned_thrice['End_Time'] - cleaned_thrice['Start_Time']).dt.total_seconds() / 60 > 0]
 
-    print(f"[{current_time}] Performing Data Clean Up")
+    current_time = time.strftime("%H:%M:%S")
     print(f"[{current_time}] Total Rows Read After Cleaning Is: {len(fully_cleaned_df)}")
 
     end_time = time.time()
     total_time = end_time - start_time
 
     print(f"\nTime to clean is: {total_time: .2f} seconds")
-
+    flags.isDFProccessed = True
     return fully_cleaned_df
 
 # QUESTION 1
@@ -149,6 +171,9 @@ def statesWithSeverityOfTwo(data_frame):
     start_time = time.time()
     current_time = time.strftime("%H:%M:%S")
 
+    # Get the Year from Start_Time column
+    data_frame['Year'] = data_frame['Start_Time'].dt.year
+
     # Filter to only include severity 2 
     severity_2 = data_frame[data_frame['Severity'] == 2]
 
@@ -159,17 +184,17 @@ def statesWithSeverityOfTwo(data_frame):
     state_severity = yearly_state_accidents.loc[yearly_state_accidents.groupby('Year')['Total_Accidents'].idxmax()]
 
     # Sort by descending order
-    sorted_state_severity = state_severity.sort_values( by = 'Total_Accidents' , ascending = False)
+    sorted_state_severity = state_severity.sort_values( by = 'Year' , ascending = True)
 
-    # Get state with highest accidents
-    top_state_severity = sorted_state_severity.head(1)
+    # Get states with highest accidents
+    top_state_severity = sorted_state_severity
 
     end_time = time.time()
     total_time = end_time - start_time
 
     print("------------------------------------------------------------------")
     print(f"[{current_time}] 3. What is the state that had the most accidents of severity 2? Display the data per year.")
-    print(f"[{current_time}] The state that had the most accidents of severity 2 is:\n")
+    print(f"[{current_time}] The states that had the most accidents of severity 2 per year is:\n")
     print(top_state_severity.to_string(index = False))
     print("------------------------------------------------------------------")
     print()
@@ -380,7 +405,8 @@ def bakersfieldSeverityAccidents(data_frame):
 
 # QUESTION 10
 def vegasLongestAccidents(data_frame):
-    print("\n10. What was the longest accident (in hours) recorded in Las Vegas in" +
+    print("\n------------------------------------------------------------------")
+    print("10. What was the longest accident (in hours) recorded in Las Vegas in" +
           " the Spring (March, April, and May)?")
     print("Displaying the longest accidents of each month in Spring per year:")
     data_frame['Start_Time'] = pd.to_datetime(data_frame['Start_Time'],
@@ -391,7 +417,6 @@ def vegasLongestAccidents(data_frame):
     min_year = data_frame['Start_Time'].dt.year.min()
     max_year = data_frame['Start_Time'].dt.year.max()
 
-    print("------------------------------------------------------------------")
     for year in range(min_year, (max_year + 1)):
         print("\n\nThe longest accident recorded in Las Vegas in Spring of",
               year, "was :")
@@ -610,10 +635,7 @@ def accidentsUsingTempAndVisibility(df):
 
 def main():
     data_frame = None
-    isDFLoaded = False
-
     fully_cleaned_df = None
-    isDFProccessed = False
 
     start_time = time.time()
     while True:
@@ -629,21 +651,19 @@ def main():
         choice = input("\nPlease enter your choice: ")
 
         if choice == '1':
-            if not isDFLoaded:
+            if not flags.isDFLoaded:
                 data_frame = loadData()
-                isDFLoaded = True
             else:
-                print("\nData has already been loaded.")
+                print(text.yellow + "\nWARNING: Data has already been loaded." + text.reset)
         elif choice == '2':
-            if not isDFProccessed and isDFLoaded:
+            if not flags.isDFProccessed and flags.isDFLoaded:
                 fully_cleaned_df = cleanDataFrame(data_frame)
-                isDFProccessed = True
-            elif not isDFLoaded:
-                print("\nData needs to be loaded.")
+            elif not flags.isDFLoaded:
+                print(text.yellow + "\nWARNING: Data needs to be loaded." + text.reset)
             else:
-                print("\nData has already been processed.")
+                print(text.yellow + "\nWARNING: Data has already been processed." + text.reset)
         elif choice == '3':
-            if isDFLoaded and isDFProccessed:
+            if flags.isDFLoaded and flags.isDFProccessed:
                 threeMonthsWithHighestAccidents(fully_cleaned_df) # Question 1
                 yearWithHighestAccidents(fully_cleaned_df)        # Question 2
                 statesWithSeverityOfTwo(fully_cleaned_df)         # Question 3
@@ -652,12 +672,12 @@ def main():
                 avgHumidityAndTemperature(fully_cleaned_df)       # Question 6
                 nycWeatherConditionAccidents(fully_cleaned_df)    # Question 7
                 nhMaxVisibility(fully_cleaned_df)                 # Question 8
-                bakersfieldSeverityAccidents(fully_cleaned_df)    # Question 9
+                bakersfieldSeverityAccidents(fully_cleaned_df)     # Question 9
                 vegasLongestAccidents(fully_cleaned_df)           # Question 10
-            elif isDFLoaded and not isDFProccessed:
-                print("\nData has been loaded, but not processed.")
-            elif not isDFLoaded:
-                print("\nData needs to be loaded.")
+            elif flags.isDFLoaded and not flags.isDFProccessed:
+                print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
+            elif not flags.isDFLoaded:
+                print(text.yellow + "\nWARNING: Data needs to be loaded." + text.reset)
         elif choice == '4':
             searchStateCityZip(fully_cleaned_df)
         elif choice == '5':
