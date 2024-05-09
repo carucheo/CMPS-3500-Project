@@ -629,21 +629,45 @@ def accidentsUsingTempAndVisibility(df):
     start_time = time.time()
     current_time = time.strftime("%H:%M:%S")
 
-    # Get input 
-    min_temp_input = input("Enter a Minimum Temperature (F): ")
-    max_temp_input = input("Enter a Maximum Temperature (F): ")
-    min_range_input = input("Enter a Minimum Visibility (mi): ")
-    max_range_input = input("Enter a Maximum Visibility (mi): ")
-    print("")
 
-    # Convert to float or set to None if empty
-    min_temp = float(min_temp_input) if min_temp_input else None
-    max_temp = float(max_temp_input) if max_temp_input else None
-    min_range = float(min_range_input) if min_range_input else None
-    max_range = float(max_range_input) if max_range_input else None
+    # Ask for input, if something other than a float is given then ask for a valid input
+    while True:
+        try:
+            min_temp_input = input("Enter a Minimum Temperature (F): ")
+            min_temp = float(min_temp_input) if min_temp_input else None
+            break
+        except ValueError:
+            print("Please enter a valid number for temperature.")
+
+    while True:
+        try:
+            max_temp_input = input("Enter a Maximum Temperature (F): ")
+            max_temp = float(max_temp_input) if max_temp_input else None
+            break
+        except ValueError:
+            print("Please enter a valid number for temperature.")
+
+    while True:
+        try:
+            min_range_input = input("Enter a Minimum Visibility (mi): ")
+            min_range = float(min_range_input) if min_range_input else None
+            break
+        except ValueError:
+            print("Please enter a valid number for visibility.")
+
+    while True:
+        try:
+            max_range_input = input("Enter a Maximum Visibility (mi): ")
+            max_range = float(max_range_input) if max_range_input else None
+            break
+        except ValueError:
+            print("Please enter a valid number for visibility.")
+
+    print("")
 
     filtered_df = df
 
+    #Begin filtering
     if min_temp is not None:
         filtered_df = filtered_df[filtered_df['Temperature(F)'] >= min_temp]
     if max_temp is not None:
