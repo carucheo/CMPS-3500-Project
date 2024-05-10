@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import datetime as dtime
 import time
+import os
 
 # Class for flags used in main menu
 class Flag:
@@ -36,8 +37,26 @@ text = Text()
 
 # Function to load data from a file
 def loadData():
+    # Display all available files in current directory
+    print("")
+    print("Here are all available files in the current directory: \n")
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    iterator = 0
+    for f in files:
+        print(f"({iterator}): {f}")
+        iterator += 1
+
     # Ask user to input file name
-    user_file = input("\nEnter the name of your file (with extension): ")
+    user_input = input("\nWhich file would you like to choose: ")
+
+    try:
+        if user_input.isalpha() or not user_input.isdigit() or int(user_input) > iterator or int(user_input) < 0:
+            raise Exception(text.red + "\nError: Invalid input - NOT one of the selectable options." + text.reset)
+    except Exception as err:
+        print(err)
+        return
+
+    user_file = files[int(user_input)]
 
     print("\nLoading input data set:")
     print("***********************")
@@ -56,6 +75,10 @@ def loadData():
                                                        'Timezone', 'Weather_Timestamp', 'Temperature(F)', 'Humidity(%)', 
                                                        'Pressure(in)', 'Visibility(mi)', 'Precipitation(in)', 'Weather_Condition'])
 
+        test_df = data_frame.dropna()
+        if test_df.empty:
+            raise Exception(text.red + "\nERROR: File did not load right. Please use an appropriate file." + text.reset)
+
         current_time = time.strftime("%H:%M:%S")
         print(f"[{current_time}] Total Columns Read: {len(data_frame.columns)}")
         print(f"[{current_time}] Total Rows Read: {len(data_frame)}")
@@ -71,6 +94,11 @@ def loadData():
         print(text.red + f"\nERROR: File '{user_file}' not found." + text.reset)
         flags.isDFLoaded = False
         return None
+
+    except Exception as err:
+        print(err)
+        flags.isDFLoaded = False
+        return
 
 # Function to process/clean data from a file
 def cleanDataFrame(data_frame):
@@ -463,7 +491,7 @@ def vegasLongestAccidents(data_frame):
 
 def checkState(state):
     try:
-        if len(state) != 2 or not state.isalpha():
+        if not state.isalpha() or len(state) != 2:
             raise ValueError(text.red + "\nERROR: Invalid state input. Must be state's abbreviation.\n" + text.reset)
     except ValueError as err:
         #print error message
@@ -486,8 +514,8 @@ def checkCity(city):
 
 def checkZipcode(zipcode):
     try:
-        test_zip = int(zipcode)
-        if (len(zipcode) != 5) or not zipcode.isdigit():
+        # test_zip = int(zipcode)
+        if not zipcode.isdigit() or (len(zipcode) != 5):
             raise ValueError(text.red + "\nERROR: Invalid Zipcode. Must be a 5-digit Zipcode.\n" + text.reset)
     except ValueError as err:
         #print error message
@@ -623,6 +651,8 @@ def checkYear(year):
 
 def checkMonth(month):
     try:
+        if not month.isdigit():
+            raise ValueError(text.red + "\nERROR: Invalid input for month. Value must be between 1-12.\n" + text.reset)
         if (int(month) < 1) or (int(month) > 12):
             raise ValueError(text.red + "\nERROR: Invalid input for month. Value must be between 1-12.\n" + text.reset)
     except ValueError as err:
@@ -633,8 +663,10 @@ def checkMonth(month):
 
 def checkDay(day):
     try:
+        if not day.isdigit():
+            raise ValueError(text.red + "\nERROR: Invalid input for day. Value must be between 1-31.\n" + text.reset)
         if (int(day) < 1) or (int(day) > 31):
-            raise ValueError(text.red + "\nInvalid input for day. Value must be between 1-31.\n" + text.reset)
+            raise ValueError(text.red + "\nERROR: Invalid input for day. Value must be between 1-31.\n" + text.reset)
     except ValueError as err:
         print(err)
         return False
