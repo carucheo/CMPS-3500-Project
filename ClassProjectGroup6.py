@@ -436,10 +436,14 @@ def bakersfieldSeverityAccidents(data_frame):
 
 # QUESTION 10
 def vegasLongestAccidents(data_frame):
+    # Set variables to track time
+    start_time = time.time()
+    current_time = time.strftime("%H:%M:%S")
+    
     print("\n------------------------------------------------------------------")
-    print("10. What was the longest accident (in hours) recorded in Las Vegas in" +
+    print(f"[{current_time}] 10. What was the longest accident (in hours) recorded in Las Vegas in" +
           " the Spring (March, April, and May)?")
-    print("Displaying the longest accidents of each month in Spring per year:")
+    print(f"[{current_time}] Displaying the longest accidents of each month in Spring per year:")
     data_frame['Start_Time'] = pd.to_datetime(data_frame['Start_Time'],
                                       format='%-m/%-d/%Y %-H:%-M %p')
     data_frame['End_Time'] = pd.to_datetime(data_frame['End_Time'],
@@ -448,9 +452,12 @@ def vegasLongestAccidents(data_frame):
     min_year = data_frame['Start_Time'].dt.year.min()
     max_year = data_frame['Start_Time'].dt.year.max()
 
+    end_time = time.time()
+    total_time = end_time - start_time
+    
     for year in range(min_year, (max_year + 1)):
-        print("\n\nThe longest accident recorded in Las Vegas in Spring of",
-              year, "was :")
+        print("\nThe longest accident recorded in Las Vegas in Spring of",
+              year, "was:")
         march = data_frame[(data_frame['Start_Time'].dt.month == 3) &
                    (data_frame['Start_Time'].dt.year == year)].copy()
         april = data_frame[(data_frame['Start_Time'].dt.month == 4) &
