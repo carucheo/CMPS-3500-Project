@@ -1,7 +1,7 @@
 # GROUP 6
 # ASGT: Group Project
 # ORGN: CSUB - CMPS 3500
-# FILE: clean_csv.py
+# FILE: ClassProjectGroup6.py
 # STUDENT 1: Alberto Munoz
 # STUDENT 2: Everardo Robles Tena
 # STUDENT 3: Karen Santiago
@@ -461,10 +461,43 @@ def vegasLongestAccidents(data_frame):
 
     print("------------------------------------------------------------------")
 
+def checkState(state):
+    try:
+        if len(state) != 2 or not state.isalpha():
+            raise ValueError(text.red + "\nERROR: Invalid state input. Must be state's abbreviation.\n" + text.reset)
+    except ValueError as err:
+        #print error message
+        print(err)
+        return False
+
+    return True
+
+def checkCity(city):
+    try:
+        if not all(char.isalpha() or char.isspace() for char in city):
+            raise ValueError(text.red + "\nERROR: Invalid city input. Only letters can be entered for" + 
+                             " the city.\n" + text.reset)
+    except ValueError as err:
+        #print error message
+        print(err)
+        return False
+
+    return True
+
+def checkZipcode(zipcode):
+    try:
+        test_zip = int(zipcode)
+        if (len(zipcode) != 5) or not zipcode.isdigit():
+            raise ValueError(text.red + "\nERROR: Invalid Zipcode. Must be a 5-digit Zipcode.\n" + text.reset)
+    except ValueError as err:
+        #print error message
+        print(err)
+        return False
+
+    return True
+
 # SEARCH FUNCTION 1
 def searchStateCityZip(df):
-    # Start the timer 
-    start_time = time.time()
 
     # Get input from user for the state, city, and zipcode
     print("")
@@ -473,29 +506,93 @@ def searchStateCityZip(df):
     print("Enter state's abbreviation. For example, CA for California.")
     state = input("Press 'Enter' if no state: ")
     city = input("Enter city. Press 'Enter' if no city: ")
-    zipcode = input("Enter zipcode. Press 'Enter' if no zipcode: ")
+    zipcode = input("Enter 5-digit zipcode. Press 'Enter' if no zipcode: ")
+
+    # Start the timer 
+    start_time = time.time()
 
     # Searches dataframe based on input collected for state, city, and zipcode
     # If no input is inserted for an input, it will be ignorned.
     # If no input is inserted for all 3, exit the function
     if state and city and zipcode:
-        search = df[(df['State'] == state) & (df['City'] == city)
-                    & (df['Zipcode'] == zipcode)]
+        check1 = checkState(state)
+        check2 = checkCity(city)
+        check3 = checkZipcode(zipcode)
+        if check1 and check2 and check3:
+            search = df[(df['State'] == state) & (df['City'] == city)
+                        & (df['Zipcode'] == zipcode)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif state and city:
-        search = df[(df['State'] == state) & (df['City'] == city)]
+        check1 = checkState(state)
+        check2 = checkCity(city)
+        if check1 and check2:
+            search = df[(df['State'] == state) & (df['City'] == city)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif state and zipcode:
-        search = df[(df['State'] == state) & (df['Zipcode'] == zipcode)]
+        check1 = checkState(state)
+        check2 = checkZipcode(zipcode)
+        if check1 and check2:
+            search = df[(df['State'] == state) & (df['Zipcode'] == zipcode)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif city and zipcode:
-        search = df[(df['City'] == city) & (df['Zipcode'] == zipcode)]
+        check1 = checkCity(city)
+        check2 = checkZipcode(zipcode)
+        if check1 and check2:
+            search = df[(df['City'] == city) & (df['Zipcode'] == zipcode)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif state:
-        search = df[(df['State'] == state)]
+        check1 = checkState(state)
+        if check1:
+            search = df[(df['State'] == state)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif city:
-        search = df[(df['City'] == city)]
+        check1 = checkCity(city)
+        if check1:
+            search = df[(df['City'] == city)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     elif zipcode:
-        search = df[(df['Zipcode'] == zipcode)]
+        check1 = checkZipcode(zipcode)
+        if check1:
+            search = df[(df['Zipcode'] == zipcode)]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     else:
         print("\nYou have entered nothing for state, city, and zipcode.")
-        print("Exiting search...")
+        print("Exiting search...\n")
         return
 
     # print dataframe after search is done.
@@ -503,8 +600,8 @@ def searchStateCityZip(df):
         end_time = time.time()
         total_time = end_time - start_time
         print("")
-        print("No results found")
-        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+        print("No results found\n")
+        print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
     else:
         #Check total time
         end_time = time.time()
@@ -512,27 +609,40 @@ def searchStateCityZip(df):
         total_accidents = len(search)
         print("")
         print(f"There were {total_accidents} accidents\n")
-        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+        print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
 
+def checkYear(year):
+    try:
+        if not year.isdigit() or (len(year) != 4):
+            raise ValueError(text.red + "\nERROR: Invalid input for year. Year must be 4 digits.\n" + text.reset)
+    except ValueError as err:
+        print(err)
+        return False
+
+    return True
 
 def checkMonth(month):
-    if (int(month) >= 1) and (int(month) <= 12):
-        return True
-    else:
-        print("Value entered for month is not valid.")
+    try:
+        if (int(month) < 1) or (int(month) > 12):
+            raise ValueError(text.red + "\nERROR: Invalid input for month. Value must be between 1-12.\n" + text.reset)
+    except ValueError as err:
+        print(err)
         return False
 
+    return True
+
 def checkDay(day):
-    if (int(day) >= 1) and (int(day) <= 31):
-        return True
-    else:
-        print("Value entered for day is not valid.")
+    try:
+        if (int(day) < 1) or (int(day) > 31):
+            raise ValueError(text.red + "\nInvalid input for day. Value must be between 1-31.\n" + text.reset)
+    except ValueError as err:
+        print(err)
         return False
+
+    return True
 
 # SEARCH FUNCTION 2
 def searchYearMonthDay(df):
-    # Start the timer 
-    start_time = time.time()
 
     # Get input from user for the year, month, and day
     print("")
@@ -546,18 +656,25 @@ def searchYearMonthDay(df):
     df['Start_Time'] = pd.to_datetime(df['Start_Time'],
                                       format='%-m/%-d/%Y %-H:%-M %p')
 
+    # Start the timer 
+    start_time = time.time()
+
     # Searches dataframe based on input collected for month, day, and year
     # If no input is inserted for an input, it will be ignorned.
     # If no input is inserted for all 3, exit the function
     if month and day and year:
         check1 = checkDay(day)
         check2 = checkMonth(month)
-        if check1 and check2:
+        check3 = checkYear(year)
+        if check1 and check2 and check3:
             match = df[(df['Start_Time'].dt.month == int(month)) &
                        (df['Start_Time'].dt.day == int(day)) &
                        (df['Start_Time'].dt.year == int(year))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif month and day:
         check1 = checkDay(day)
@@ -566,42 +683,70 @@ def searchYearMonthDay(df):
             match = df[(df['Start_Time'].dt.month == int(month)) &
                        (df['Start_Time'].dt.day == int(day))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif month and year:
         check1 = checkMonth(month)
+        check2 = checkYear(year)
         if check1:
             match = df[(df['Start_Time'].dt.month == int(month)) &
                        (df['Start_Time'].dt.year == int(year))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif day and year:
         check1 = checkDay(day)
-        if check1:
+        check2 = checkYear(year)
+        if check1 and check2:
             match = df[(df['Start_Time'].dt.day == int(day)) &
                        (df['Start_Time'].dt.year == int(year))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif month:
         check1 = checkMonth(month)
         if check1:
             match = df[(df['Start_Time'].dt.month == int(month))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif day:
         check1 = checkDay(day)
         if check1:
             match = df[(df['Start_Time'].dt.day == int(day))]
         else:
-            print("Exiting search...")
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
             return
     elif year:
-        match = df[(df['Start_Time'].dt.year == int(year))]
+        check1 = checkYear(year)
+        if check1:
+            match = df[(df['Start_Time'].dt.year == int(year))]
+        else:
+            print("Exiting search...\n")
+            end_time = time.time()
+            total_time = end_time - start_time
+            print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
+            return
     else:
-        print("\nNo month, day, or year entered. Exiting search...")
+        print("\nNo month, day, or year entered. Exiting search...\n")
+        end_time = time.time()
+        total_time = end_time - start_time
+        print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
         return
 
     # print dataframe after search is done.
@@ -609,15 +754,15 @@ def searchYearMonthDay(df):
         end_time = time.time()
         total_time = end_time - start_time
         print("")
-        print("No results found")
-        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+        print("No results found\n")
+        print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
     else:
         end_time = time.time()
         total_time = end_time - start_time
         total_accidents = len(match)
         print("")
         print(f"There were {total_accidents} accidents\n")
-        print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+        print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
         
 # SEARCH FUNCTION 3
 def accidentsUsingTempAndVisibility(df):
@@ -626,48 +771,75 @@ def accidentsUsingTempAndVisibility(df):
     print("******************")
 
     # Set Up Variables to track time
-    start_time = time.time()
     current_time = time.strftime("%H:%M:%S")
 
+    # Get input and check if it is valid
+    min_temp_input = input("Enter a Minimum Temperature (F): ")
 
-    # Ask for input, if something other than a float is given then ask for a valid input
-    while True:
-        try:
-            min_temp_input = input("Enter a Minimum Temperature (F): ")
-            min_temp = float(min_temp_input) if min_temp_input else None
-            break
-        except ValueError:
-            print("Please enter a valid number for temperature.")
+    try:
+        if min_temp_input.isalpha():
+            raise TypeError(text.red + "\nERROR: Input is NOT an integer nor a float value." + text.reset)
+    except TypeError as err:
+        print(err)
+        return
 
-    while True:
-        try:
-            max_temp_input = input("Enter a Maximum Temperature (F): ")
-            max_temp = float(max_temp_input) if max_temp_input else None
-            break
-        except ValueError:
-            print("Please enter a valid number for temperature.")
+    max_temp_input = input("Enter a Maximum Temperature (F): ")
 
-    while True:
-        try:
-            min_range_input = input("Enter a Minimum Visibility (mi): ")
-            min_range = float(min_range_input) if min_range_input else None
-            break
-        except ValueError:
-            print("Please enter a valid number for visibility.")
+    try:
+        if max_temp_input.isalpha():
+            raise TypeError(text.red + "\nERROR: Input is NOT an integer nor a float value." + text.reset)
+    except TypeError as err:
+        print(err)
+        return
 
-    while True:
-        try:
-            max_range_input = input("Enter a Maximum Visibility (mi): ")
-            max_range = float(max_range_input) if max_range_input else None
-            break
-        except ValueError:
-            print("Please enter a valid number for visibility.")
+    min_range_input = input("Enter a Minimum Visibility (mi): ")
+
+    try:
+        if min_range_input.isalpha():
+            raise TypeError(text.red + "\nERROR: Input is NOT an integer nor a float value." + text.reset)
+    except TypeError as err:
+        print(err)
+        return
+
+    max_range_input = input("Enter a Maximum Visibility (mi): ")
+
+    try:
+        if max_range_input.isalpha():
+            raise TypeError(text.red + "\nERROR: Input is NOT an integer nor a float value." + text.reset)
+    except TypeError as err:
+        print(err)
+        return
 
     print("")
 
+    # Start timer
+    start_time = time.time()
+
+    # Convert to float or set to None if empty
+    min_temp = float(min_temp_input) if min_temp_input else None
+    max_temp = float(max_temp_input) if max_temp_input else None
+
+    # Check if temperature are in correct order
+    try:
+        if max_temp != None and max_temp < min_temp:
+            raise Exception(text.red + "ERROR: Maximum temperature is smaller than minimum temperature" + text.reset)
+    except Exception as err:
+        print(err)
+        return
+
+    min_range = float(min_range_input) if min_range_input else None
+    max_range = float(max_range_input) if max_range_input else None
+
+    # Check if visibility are in correct order
+    try:
+        if max_range != None and max_range < min_range:
+            raise Exception(text.red + "ERROR: Maximum visibility is smaller than minimum visibility" + text.reset)
+    except Exception as err:
+        print(err)
+        return
+
     filtered_df = df
 
-    #Begin filtering
     if min_temp is not None:
         filtered_df = filtered_df[filtered_df['Temperature(F)'] >= min_temp]
     if max_temp is not None:
@@ -686,7 +858,7 @@ def accidentsUsingTempAndVisibility(df):
 
     print(f"There were {total_accidents} accidents using the specified range")
     print("")
-    print(text.blue + f"Time to perform search is: {total_time: .2f} seconds" + text.reset)
+    print(text.blue + f"Time to perform search is: {total_time: .5f} seconds" + text.reset)
 
 def main():
     data_frame = None
@@ -727,7 +899,7 @@ def main():
                 avgHumidityAndTemperature(fully_cleaned_df)       # Question 6
                 nycWeatherConditionAccidents(fully_cleaned_df)    # Question 7
                 nhMaxVisibility(fully_cleaned_df)                 # Question 8
-                bakersfieldSeverityAccidents(fully_cleaned_df)     # Question 9
+                bakersfieldSeverityAccidents(fully_cleaned_df)    # Question 9
                 vegasLongestAccidents(fully_cleaned_df)           # Question 10
             elif flags.isDFLoaded and not flags.isDFProccessed:
                 print(text.yellow + "\nWARNING: Data has been loaded, but not processed." + text.reset)
