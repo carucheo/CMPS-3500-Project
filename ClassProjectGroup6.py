@@ -50,7 +50,7 @@ def loadData():
     user_input = input("\nWhich file would you like to choose: ")
 
     try:
-        if user_input.isalpha() or not user_input.isdigit() or int(user_input) > iterator or int(user_input) < 0:
+        if user_input.isalpha() or not user_input.isdigit() or int(user_input) >= iterator or int(user_input) < 0:
             raise Exception(text.red + "\nError: Invalid input - NOT one of the selectable options." + text.reset)
     except Exception as err:
         print(err)
@@ -554,6 +554,8 @@ def searchStateCityZip(df):
         check2 = checkCity(city)
         check3 = checkZipcode(zipcode)
         if check1 and check2 and check3:
+            state = state.upper()
+            city = city.title()
             search = df[(df['State'] == state) & (df['City'] == city)
                         & (df['Zipcode'] == zipcode)]
         else:
@@ -566,6 +568,8 @@ def searchStateCityZip(df):
         check1 = checkState(state)
         check2 = checkCity(city)
         if check1 and check2:
+            state = state.upper()
+            city = city.title()
             search = df[(df['State'] == state) & (df['City'] == city)]
         else:
             print("Exiting search...\n")
@@ -577,6 +581,7 @@ def searchStateCityZip(df):
         check1 = checkState(state)
         check2 = checkZipcode(zipcode)
         if check1 and check2:
+            state = state.upper()
             search = df[(df['State'] == state) & (df['Zipcode'] == zipcode)]
         else:
             print("Exiting search...\n")
@@ -588,6 +593,7 @@ def searchStateCityZip(df):
         check1 = checkCity(city)
         check2 = checkZipcode(zipcode)
         if check1 and check2:
+            city = city.title()
             search = df[(df['City'] == city) & (df['Zipcode'] == zipcode)]
         else:
             print("Exiting search...\n")
@@ -598,6 +604,7 @@ def searchStateCityZip(df):
     elif state:
         check1 = checkState(state)
         if check1:
+            state = state.upper()
             search = df[(df['State'] == state)]
         else:
             print("Exiting search...\n")
@@ -608,6 +615,7 @@ def searchStateCityZip(df):
     elif city:
         check1 = checkCity(city)
         if check1:
+            city = city.title()
             search = df[(df['City'] == city)]
         else:
             print("Exiting search...\n")
